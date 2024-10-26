@@ -12,30 +12,33 @@ ig.state.generateDevice("Device");
 
     const followers = await getAllItemsFromFeed(followersFeed);
     const following = await getAllItemsFromFeed(followingFeed);
-    // Making a new map of users username that follow you.
-    const followersUsername = new Set(
-        followers.map(({ username }) => username),
-    );
-    const followingUsername = new Set(
-        following.map(({ username }) => username),
-    );
-    // Filtering through the ones who aren't following you.
+
+    const followersUsername = new Set(followers.map(({ username }) => username));
+    const followingUsername = new Set(following.map(({ username }) => username));
+
     const notFollowingYou = following.filter(
         ({ username }) => !followersUsername.has(username),
     );
     const youNotFollowing = followers.filter(
         ({ username }) => !followingUsername.has(username),
     );
-    console.log(
-        "Seguidores:",
-        followers.map(({ username }) => username),
-        "Seguindo:",
-        following.map(({ username }) => username),
-        "Não seguindo você:",
-        notFollowingYou.map(({ username }) => username),
-        "Você não segue de volta:",
-        youNotFollowing.map(({ username }) => username),
-    );
+
+    // Separando perfis verificados
+    const verifiedFollowers = followers.filter(({ is_verified }) => is_verified);
+    const verifiedFollowing = following.filter(({ is_verified }) => is_verified);
+    const verifiedNotFollowingYou = notFollowingYou.filter(({ is_verified }) => is_verified);
+    const verifiedYouNotFollowing = youNotFollowing.filter(({ is_verified }) => is_verified);
+
+    console.log("Seguidores:", followers.map(({ username }) => username));
+    console.log("Seguindo:", following.map(({ username }) => username));
+    console.log("Não seguindo você:", notFollowingYou.map(({ username }) => username));
+    console.log("Você não segue de volta:", youNotFollowing.map(({ username }) => username));
+
+    // Exibindo perfis verificados
+    console.log("Perfis verificados que seguem você:", verifiedFollowers.map(({ username }) => username));
+    console.log("Perfis verificados que você segue:", verifiedFollowing.map(({ username }) => username));
+    console.log("Perfis verificados que não seguem você de volta:", verifiedNotFollowingYou.map(({ username }) => username));
+    console.log("Perfis verificados que você não segue de volta:", verifiedYouNotFollowing.map(({ username }) => username));
 })();
 
 async function getAllItemsFromFeed(feed) {
